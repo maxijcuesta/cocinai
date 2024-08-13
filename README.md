@@ -1,36 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# CocinAI
 
-## Getting Started
+CocinAI es un generador de recetas impulsado por inteligencia artificial. Este proyecto utiliza la API de OpenAI para sugerir recetas creativas basadas en los ingredientes que tienes a mano. Además, genera una imagen del plato sugerido y permite descargar la receta en formato PDF.
 
-First, run the development server:
+## Características
+
+- **Generación de recetas**: Introduce los ingredientes y obtén una receta personalizada.
+- **Generación de imágenes**: Obtén una imagen del plato generado por IA.
+- **Descarga en PDF**: Descarga la receta y la imagen en un archivo PDF.
+
+## Comenzando
+
+Para ejecutar el servidor de desarrollo localmente:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abre http://localhost:3000 en tu navegador para ver la aplicación en acción.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Requisitos Previos
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+	•	Node.js v14 o superior
+	•	Una API Key de OpenAI configurada en un archivo .env.local como OPENAI_API_KEY.
 
-## Learn More
+Variables de Entorno
 
-To learn more about Next.js, take a look at the following resources:
+Crea un archivo .env.local en la raíz del proyecto y añade tu API Key de OpenAI:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+OPENAI_API_KEY=tu_api_key_aqui
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Despliegue en Vercel
 
-## Deploy on Vercel
+El despliegue más sencillo para tu aplicación Next.js es utilizando la Plataforma Vercel desde los creadores de Next.js.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Licencia
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Este proyecto se distribuye bajo la Licencia MIT.
