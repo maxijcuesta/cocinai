@@ -39,9 +39,12 @@ export async function POST(req: Request) {
       ],
     });
 
-    console.log("Respuesta de la API de OpenAI para la receta:", respuestaReceta);
+    const receta = respuestaReceta.choices[0].message.content || null;
 
-    const receta = respuestaReceta.choices[0].message.content;
+    if (!receta) {
+      console.error("No se pudo generar la receta.");
+      return NextResponse.json({ error: 'No se pudo generar la receta' }, { status: 500 });
+    }
 
     // Extraer el título del plato desde la receta
     const tituloPlato = receta.split('\n')[0];  // Asumiendo que el título es la primera línea de la receta
@@ -53,8 +56,6 @@ export async function POST(req: Request) {
       n: 1,
       size: "1024x1024"
     });
-
-    console.log("Respuesta de la API de OpenAI para la imagen:", respuestaImagen);
 
     const urlImagen = respuestaImagen.data[0].url;
 
