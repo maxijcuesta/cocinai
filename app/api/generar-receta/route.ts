@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     let prompt = `Receta con: ${ingredientes.join(', ')}`;
 
     const respuestaReceta = await openai.chat.completions.create({
-      model: 'gpt-4-turbo',
+      model: 'gpt-3.5-turbo',
       messages: [
         {
           role: 'system',
@@ -45,9 +45,9 @@ export async function POST(req: Request) {
       console.error("No se pudo generar la receta.");
       return NextResponse.json({ error: 'No se pudo generar la receta' }, { status: 500 });
     }
-
+    
     // Extraer el título del plato desde la receta
-    const tituloPlato = receta.split('\n')[0];  // Asumiendo que el título es la primera línea de la receta
+    const tituloPlato = receta!.split('\n')[0];  // Usar ! para asegurar que receta no es null
     console.log("Título del plato:", tituloPlato);
 
     // Usar solo el título del plato para generar la imagen
