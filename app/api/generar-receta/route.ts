@@ -4,6 +4,7 @@ import OpenAI from 'openai';
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
+
 export async function POST(req: Request) {
   try {
     console.log("Procesando solicitud POST...");
@@ -11,53 +12,47 @@ export async function POST(req: Request) {
     let { ingredientes } = await req.json();
     console.log("Ingredientes recibidos:", ingredientes);
 
-    if (!ingredientes) {
-      console.error('No se proporcionaron ingredientes');
+    if (!ingredientes || ingredientes.length === 0) {
       return NextResponse.json({ error: 'Se requieren ingredientes' }, { status: 400 });
     }
 
     // Limitar a un máximo de 4 ingredientes
-    if (ingredientes.length > 4) {
-      ingredientes = ingredientes.slice(0, 4);
-      console.warn('Se han ingresado más de 4 ingredientes, solo se considerarán los primeros 4:', ingredientes);
-    }
+    ingredientes = ingredientes.slice(0, 4);
 
-    // Construir el prompt para la receta de manera concisa
-    let prompt = `Receta con: ${ingredientes.join(', ')}`;
+    // Construir el prompt para la receta
+    const promptReceta = `Receta con: ${ingredientes.join(', ')}`;
 
-    const respuestaReceta = await openai.chat.completions.create({
-      model: 'gpt-3.5-turbo',
-      messages: [
-        {
-          role: 'system',
-          content: 'Eres un cocinero que genera recetas basadas en los ingredientes dados.',
-        },
-        {
-          role: 'user',
-          content: prompt,
-        },
-      ],
-    });
+    // Generar la receta y la imagen en paralelo
+    const [respuestaReceta, respuestaImagen] = await Promise.all([
+      openai.chat.completions.create({
+        model: 'gpt-3.5-turbo',
+        messages: [
+          {
+            role: 'system',
+            content: 'Eres un cocinero que genera recetas basadas en los ingredientes dados.',
+          },
+          {
+            role: 'user',
+            content: promptReceta,
+          },
+        ],
+      }),
+      openai.images.generate({
+        prompt: `Un plato de comida con ${ingredientes.join(', ')}`,
+        n: 1,
+        size: "512x512", 
+      }),
+    ]);
 
-    const receta = respuestaReceta.choices[0].message.content || null;
-
+    const receta = respuestaReceta.choices[0].message?.content || null;
     if (!receta) {
-      console.error("No se pudo generar la receta.");
       return NextResponse.json({ error: 'No se pudo generar la receta' }, { status: 500 });
     }
-    
-    // Extraer el título del plato desde la receta
-    const tituloPlato = receta!.split('\n')[0];  // Usar ! para asegurar que receta no es null
-    console.log("Título del plato:", tituloPlato);
 
-    // Usar solo el título del plato para generar la imagen
-    const respuestaImagen = await openai.images.generate({
-      prompt: `Una foto del plato: ${tituloPlato}`,
-      n: 1,
-      size: "1024x1024"
-    });
-
-    const urlImagen = respuestaImagen.data[0].url;
+    const urlImagen = respuestaImagen.data[0]?.url || null;
+    if (!urlImagen) {
+      return NextResponse.json({ error: 'No se pudo generar la imagen' }, { status: 500 });
+    }
 
     return NextResponse.json({ receta, urlImagen });
   } catch (error: unknown) {
